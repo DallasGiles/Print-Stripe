@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 
-console.log("Checking ENV Variables:", import.meta.env); // Debugging all environment variables
+import './donation.css';
+
 console.log("Stripe Key:", import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -49,38 +50,48 @@ const DonationForm = () => {
     };
 
     return (
-        <div className="flex flex-col items-center bg-gray-100 min-h-screen p-8">
-            <h1 className="text-3xl font-bold mb-4">Donate to Print A Smile</h1>
-            <p className="text-lg mb-6">Your donation helps bring joy to children in need.</p>
+    <div className="donate-arch">
+        <div className="donate-page">
+            <h1 className="donate-header">Donate Today</h1>
+            <p className="donate-text">Your donation helps bring joy to children in need.</p>
 
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-                <label className="block mb-2 font-medium">Donation Amount (USD):</label>
+            <form onSubmit={handleSubmit} className="donate-form">
+                <label className="donate-label">Donation Amount (USD):</label>
                 <input
                     type="number"
                     min="1"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="usd-input"
                     required
                 />
 
-                <label className="block mb-2 font-medium">Your Email:</label>
+                <label className="donate-label">Your Email:</label>
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-2 border rounded mb-4"
+                    className="usd-input"
                     required
                 />
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                    className="donate-button"
                     disabled={loading}
                 >
                     {loading ? "Processing..." : "Donate"}
                 </button>
             </form>
+        </div>
+        <div className="dollar-toys">
+        <h3> How many toys will your donation fund?</h3>
+        <p>$1 will get 4 kids toys.</p>
+        <p>$10 will get 40 kids toys.</p>
+        <p>$25 will give 100 toys to kids.</p>
+        <p>$50 will put a smile on 200 kids faces</p>
+        <p>$100 will give 400 kids a Christmas to remember.</p>
+        </div>
         </div>
     );
 };
