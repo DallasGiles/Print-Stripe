@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({ origin: 'http://127.0.0.1:5500' }));
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use((req, res, next) => {
     if (req.path === '/webhook') {
@@ -25,32 +25,38 @@ app.use((req, res, next) => {
 });
 
 // Create Checkout Session
-app.post('/create-checkout-session', async (req, res) => {
-    const { amount, email } = req.body;
+app.post("/create-checkout-session", async (req, res) => {
+    console.log("Incoming request to /create-checkout-session:");
+    console.log("Request Body:", req.body);
 
     try {
+        const { amount, email } = req.body;
+        if (!amount || !email) {
+            throw new Error("Missing required parameters: amount or email");
+        }
+
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
+            payment_method_types: ["card"],
             line_items: [
                 {
                     price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: 'Donation',
-                        },
+                        currency: "usd",
+                        product_data: { name: "Donation" },
                         unit_amount: amount,
                     },
                     quantity: 1,
                 },
             ],
-            mode: 'payment',
+            mode: "payment",
             customer_email: email,
-            success_url: 'http://127.0.0.1:5500/client/success.html',
-            cancel_url: 'http://localhost:6067/cancel',
+            success_url: "http://localhost:5173/success",
+            cancel_url: "http://localhost:5173/cancel",
         });
 
+        console.log("Created Checkout Session:", session);
         res.json({ id: session.id });
     } catch (error) {
+        console.error("Error in /create-checkout-session:", error.message);
         res.status(500).json({ error: error.message });
     }
 });
